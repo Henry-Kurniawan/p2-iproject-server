@@ -103,6 +103,51 @@ class ControllerUser {
             next(err)
         }
     }
+
+    static async viewMyBookmark(req, res, next) {
+        try {
+            const { trelloListId } = req.currentUser
+            
+            let trelloBookmarks = await axios({
+                method: "get",
+                url: `https://api.trello.com/1/lists/${trelloListId}/cards`,
+            })
+
+            res.status(200).json(trelloBookmarks.data)
+        } catch (err) {
+            next(err)
+        }
+    }
+
+    static async addBookmark(req, res, next) {
+        try {
+            const { trelloListId } = req.currentUser
+            const { title } = req.query
+            const trelloParams = {
+                name: title,
+                idList: trelloListId,
+                key: process.env.TRELLO_API_KEY,
+                token: process.env.TRELLO_TOKEN
+            }
+            
+            let trelloBookmarks = await axios({
+                method: "post",
+                url: `https://api.trello.com/1/cards`,
+                params: trelloParams,
+                headers: {
+                    Accept: "application/json"
+                }
+            })
+
+            res.status(201).json({
+                id: trelloBookmarks.data.id,
+                name: trelloBookmarks.data.name,
+                dueComplete: trelloBookmarks.data.dueComplete
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
 }
 
 module.exports = ControllerUser
