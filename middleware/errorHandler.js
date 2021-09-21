@@ -24,7 +24,7 @@ const errorHandler = (err, req, res, next) => {
         case "AlreadyExist":
             code = err.code // 404
             message = [err.message]
-        case "ProductNotFound":
+        case "NotFound":
             code = err.code // 404
             message = [err.message]
             break;
