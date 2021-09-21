@@ -311,3 +311,8 @@ PUT users/bookmarks/:cardId
     "name": "Soma",
     "dueComplete": true
 }
+
+DELETE users/bookmarks/:cardID
+{
+    message: "Bookmark has been deleted"
+}

@@ -184,6 +184,33 @@ class ControllerUser {
             next(err)
         }
     }
+
+    static async deleteBookmark(req, res, next) {
+        try {
+            const cardId = req.params.cardId
+            
+            const trelloParams = {
+                key: TRELL0_API_KEY,
+                token: TRELLO_TOKEN
+            }
+
+            let trelloBookmarks = await axios({
+                method: "delete",
+                url: `https://api.trello.com/1/cards/${cardId}`,
+                params: trelloParams,
+                headers: {
+                    Accept: "application/json"
+                }
+            })
+
+            res.status(200).json({
+               message: "Bookmark has been deleted"
+            })
+
+        } catch (err) {
+            next(err)
+        }
+    }
 }
 
 module.exports = ControllerUser

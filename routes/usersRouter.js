@@ -15,7 +15,7 @@ usersRouter.use(authentication)
 usersRouter.get("/bookmarks", ControllerUser.viewMyBookmark)
 usersRouter.post("/bookmarks", ControllerUser.addBookmark)
 usersRouter.put("/bookmarks/:cardId", ControllerUser.editBookmarkStatus)
-// usersRouter.delete("/bookmarks/:cardId", ControllerUser.login)
+usersRouter.delete("/bookmarks/:cardId", ControllerUser.deleteBookmark)
 
 usersRouter.use(errorHandler)
 
