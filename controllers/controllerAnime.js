@@ -34,9 +34,9 @@ class ControllerAnime {
                     method: "get",
                     params: {
                         page: 1,
-                        per_page:20,
-                        title: "piece", 
-                        genres: "War,Action" 
+                        per_page: 20,
+                        title: "", 
+                        genres: "War,Action,Comedy" 
                     },
                     headers: {
                         'Authorization': process.env.ANIME_API_KEY,
