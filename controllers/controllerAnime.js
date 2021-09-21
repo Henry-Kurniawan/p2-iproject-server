@@ -38,7 +38,7 @@ class ControllerAnime {
                 queryParams.formats = Number(formats)
             }
 
-            if(genres.length > 0) {
+            if(genres || genres.length > 0) {
                 genres = genres.join(",")
                 queryParams.genres = genres
             }
@@ -53,7 +53,7 @@ class ControllerAnime {
                         'Accept': 'application/json'
                     }
                 })
-                
+
             res.status(200).json(result.data)
         } catch (err) {
             next(err)
