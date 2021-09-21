@@ -1,10 +1,11 @@
-const { verify } = require("../helpers/jwt")
-const { User, Product } = require("../models/")
+const { verifyToken } = require("../helpers/jwt")
+const { User } = require("../models/")
 
 const authentication = async (req, res, next) => {
     try {
         const token = req.headers.access_token
-        const payload = verify(token)
+        
+        const payload = verifyToken(token)
         const foundUser = await User.findOne({
             where : {
                 id: payload.id,
@@ -16,12 +17,12 @@ const authentication = async (req, res, next) => {
             throw new Error()
         }
 
-        req.user = {
+        req.currentUser = {
             id: foundUser.id,
             email: foundUser.email,
-            role: foundUser.role
+            trelloListId: foundUser.trelloListId
         }
-
+        
         next()
 
     } catch (err) {
