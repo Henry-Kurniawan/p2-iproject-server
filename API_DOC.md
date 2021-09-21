@@ -1,7 +1,75 @@
-GET animes?query
-query:
-title=&status=&formats=1&genres=&page=1&per_page=20
+# Heknime Planets API
 
+Heknime Planets App is an application to view a lot of animes list including all of their details. This app has :
+
+- RESTful endpoint to view anime list/details, add/remove/update your bookmarks
+- JSON formatted response
+
+
+## Endpoints List :
+
+- GET /animes
+- GET /animes/:id
+
+- POST /users/register
+- POST /users/login
+- GET /users/bookmarks
+- POST /users/bookmarks
+- PUT /users/:cardId
+- DELETE /users/:cardId
+
+
+<br />
+
+## RESTful endpoints  
+<br />
+
+
+### GET /animes
+> get a full list of animes, also acceptS query params as filter such as pages, title, genre, and others
+
+
+_Request Query Params_  
+```
+{
+    page,
+    per_page,
+    status 0~6,
+    formats: 0~6,
+    genres: ["array of string"],
+    title: "string"
+}
+```
+
+> Query details
+```
+1. status:
+"FINISHED": 0,
+"RELEASING": 1,
+"NOT_YET_RELEASED": 2,
+"CANCELLED": 3
+
+2. title
+String, case insensitive
+
+3. genres
+Array of strings, Case sensitive, example:
+arr = ["Tragedy", "War", "Action", "Comedy", "Drama"]
+
+4. formats
+"TV": 0,
+"TV_SHORT": 1,
+"MOVIE": 2,
+"SPECIAL": 3,
+"OVA": 4,
+"ONA": 5,
+"MUSIC": 6
+```
+
+
+_Response (200 - OK)_  
+> if without queries, default per_page items will be set to 9
+```
 {
     "status_code": 200,
     "message": "Page 1 contains 20 anime. Last page number is 4 for a total of 67 anime",
@@ -92,8 +160,120 @@ title=&status=&formats=1&genres=&page=1&per_page=20
     },
     "version": "1"
 }
+```
 
-GET animes/:id
+_Response (200 - OK)_  
+> example queries /animes?title=Piece&status=1&formats=0&page=1&per_page=20
+```
+{
+    "status_code": 200,
+    "message": "Page 1 contains 1 anime. Last page number is 1 for a total of 1 anime",
+    "data": {
+        "current_page": 1,
+        "count": 1,
+        "documents": [
+            {
+                "anilist_id": 21,
+                "mal_id": 21,
+                "format": 0,
+                "status": 1,
+                "titles": {
+                    "en": "One Piece",
+                    "jp": "ワンピース",
+                    "it": "One Piece"
+                },
+                "descriptions": {
+                    "en": "",
+                    "it": "Monkey D. Luffy (Nel doppiaggio italiano, Rubber) è un pirata diciassettenne che da bambino ha mangiato il frutto del diavolo Gom Gom che gli ha permesso di diventare un uomo gomma perdendo però la facoltà di nuotare. Il suo sogno è quello di diventare il Re dei pirati trovando il leggendario One Piece, tesoro nascosto da Gol D. Roger, il vecchio Re dei pirati. Per riuscire nell'impresa Rufy dovrà formare la sua ciurma formata da amici e abili combattenti del quali il pirata potrà fidarsi ciecamente. Nasce così la Ciurma di Cappello di Paglia, legata dall'indissolubile legame dell'amicizia."
+                },
+                "start_date": "1999-10-20T00:00:00Z",
+                "end_date": "1970-01-01T00:00:00Z",
+                "season_period": 3,
+                "season_year": 1999,
+                "episodes_count": 992,
+                "episode_duration": 24,
+                "cover_image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx21-tXMN3Y20PIL9.jpg",
+                "cover_color": "#e4a15d",
+                "banner_image": "https://s4.anilist.co/file/anilistcdn/media/anime/banner/21-wf37VakJmZqs.jpg",
+                "genres": [
+                    "Action",
+                    "Adventure",
+                    "Comedy",
+                    "Drama",
+                    "Fantasy",
+                    "Pirates",
+                    "Ensemble Cast",
+                    "Shounen",
+                    "Super Power",
+                    "Male Protagonist",
+                    "Conspiracy",
+                    "Ships",
+                    "Tragedy",
+                    "Time Skip",
+                    "Politics",
+                    "War",
+                    "Lost Civilization",
+                    "Swordplay",
+                    "Shapeshifting",
+                    "Henshin",
+                    "Animals",
+                    "Primarily Adult Cast",
+                    "Real Robot",
+                    "Gender Bending",
+                    "Anachronism",
+                    "Primarily Male Cast",
+                    "Skeleton",
+                    "Anti-Hero",
+                    "Ninja",
+                    "Espionage",
+                    "Guns",
+                    "Cyborg",
+                    "Nudity",
+                    "Mermaid",
+                    "Kuudere",
+                    "Tanned Skin",
+                    "Time Manipulation",
+                    "Zombie",
+                    "Battle Royale",
+                    "Assassins",
+                    "Adoption"
+                ],
+                "score": 86,
+                "id": 11
+            }
+        ],
+        "last_page": 1
+    },
+    "version": "1"
+}
+```
+
+_Response (500 - internal server error)_  
+
+```
+{
+  "message": "Internal Server Error"
+}
+```
+
+
+### GET /animes/:id
+> Get an anime by their ID
+
+
+_Request Params_  
+
+```
+anime id as
+:id
+```
+
+
+
+_Response (200)_  
+> example request: /animes/745
+
+```
 {
     "status_code": 200,
     "message": "Anime found",
@@ -151,168 +331,314 @@ GET animes/:id
     },
     "version": "1"
 }
+```
 
-POST users/register
+_Response (404 - Not Found)_  
+
+```
+{
+    "message": "Anime not found",
+}
+
+```
+
+_Response (500 - internal server error)_  
+
+```
+{
+    "message": "Internal Server Error"
+}
+```
+
+
+### POST /users/register
+> Register a user, and logged in immedately if success
+  
+_Request Body_  
+
+```
+{
+    "email",
+    "password,
+    "phoneNumber",
+    "address"
+}
+```
+
+
+_Response (201)_  
+
+```
 {
     "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiZW1haWwiOiJ0ZXN0NUBtYWlsLmNvbSIsInRyZWxsb0xpc3RJZCI6IjYxNDliMTgxM2Y4M2M3MjVkOTkzNTFkYSIsImlhdCI6MTYzMjIxOTUyMX0.tx99Uw1X_oqseA181sNh-vl3sUyNK6UBghhxOwtXCx8",
     "email": "test5@mail.com",
     "id": 7,
     "trelloListId": "6149b1813f83c725d99351da"
 }
+```
 
-POST users/login
+_Response (400 - Bad Request)_  
+
+```
+[
+    "Email is required",
+    "Invalid Email format",
+    "Password is required",
+    "Email already registered",
+]
+```
+
+_Response (500 - internal server error)_  
+
+```
 {
-    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiZW1haWwiOiJ0ZXN0NUBtYWlsLmNvbSIsInRyZWxsb0xpc3RJZCI6IjYxNDliMTgxM2Y4M2M3MjVkOTkzNTFkYSIsImlhdCI6MTYzMjIzNjAzM30.j02vRHopYUUIms3Tma7CqqQ64bt-WocKOAerJF7KJ7E",
-    "id": 7,
+  "message": "Internal Server Error"
+}
+```
+
+
+### POST /users/login  
+> Login as a user  
+
+
+_Request Body_  
+
+```
+{
+    "email",
+    "password"
+}
+```
+
+_Response (200)_  
+
+```
+{
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiZW1haWwiOiJ0ZXN0NUBtYWlsLmNvbSIsInRyZWxsb0xpc3RJZCI6IjYxNDliMTgxM2Y4M2M3MjVkOTkzNTFkYSIsImlhdCI6MTYzMjIxOTUyMX0.tx99Uw1X_oqseA181sNh-vl3sUyNK6UBghhxOwtXCx8",
     "email": "test5@mail.com",
+    "id": 7,
     "trelloListId": "6149b1813f83c725d99351da"
 }
+```
+
+_Response (401 - Unauthorized)_  
+
+```
+{
+  "message": "Invalid Username or Password"
+}
+
+```
+
+_Response (500 - internal server error)_  
+
+```
+{
+  "message": "Internal Server Error"
+}
+```
 
 
-GET users/bookmarks
+### GET /users/bookmarks/
+> Users can see their own bookmarked Animes
+
+_Request Header_  
+
+```
+{
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiZW1haWwiOiJ0ZXN0ZW1haWwyQGdtYWlsLmNvbSIsInJvbGUiOiJzdGFmZiIsImlhdCI6MTYzMDQzMDY0OH0.NCB6RcXEK6IlBzzSYIkWOzlCHJ7aQvoQCAVHvenb4eI"
+}
+```
+
+_Response (200)_  
+
+```
 [
     {
-        "id": "6149ef6af001da81162b94da",
-        "checkItemStates": null,
-        "closed": false,
-        "dateLastActivity": "2021-09-21T14:42:50.495Z",
-        "desc": "",
-        "descData": {
-            "emoji": {}
-        },
-        "dueReminder": null,
-        "idBoard": "614962b09ee4587531200408",
-        "idList": "6149b1813f83c725d99351da",
-        "idMembersVoted": [],
-        "idShort": 6,
-        "idAttachmentCover": null,
-        "idLabels": [],
-        "manualCoverAttachment": false,
-        "name": "One Piece",
-        "pos": 65535,
-        "shortLink": "56CBWORJ",
-        "isTemplate": false,
-        "cardRole": null,
-        "badges": {
-            "attachmentsByType": {
-                "trello": {
-                    "board": 0,
-                    "card": 0
-                }
-            },
-            "location": false,
-            "votes": 0,
-            "viewingMemberVoted": false,
-            "subscribed": false,
-            "fogbugz": "",
-            "checkItems": 0,
-            "checkItemsChecked": 0,
-            "checkItemsEarliestDue": null,
-            "comments": 0,
-            "attachments": 0,
-            "description": false,
-            "due": null,
-            "dueComplete": false,
-            "start": null
-        },
-        "dueComplete": false,
-        "due": null,
-        "idChecklists": [],
-        "idMembers": [],
-        "labels": [],
-        "shortUrl": "https://trello.com/c/56CBWORJ",
-        "start": null,
-        "subscribed": false,
-        "url": "https://trello.com/c/56CBWORJ/6-one-piece",
-        "cover": {
-            "idAttachment": null,
-            "color": null,
-            "idUploadedBackground": null,
-            "size": "normal",
-            "brightness": "dark",
-            "idPlugin": null
-        }
+        "id": "6149ef707c64c94c84c64dd0",
+        "name": "Demon Slayer",
+        "dueComplete": false
     },
     {
-        "id": "6149ef707c64c94c84c64dd0",
-        "checkItemStates": null,
-        "closed": false,
-        "dateLastActivity": "2021-09-21T14:42:56.279Z",
-        "desc": "",
-        "descData": {
-            "emoji": {}
-        },
-        "dueReminder": null,
-        "idBoard": "614962b09ee4587531200408",
-        "idList": "6149b1813f83c725d99351da",
-        "idMembersVoted": [],
-        "idShort": 7,
-        "idAttachmentCover": null,
-        "idLabels": [],
-        "manualCoverAttachment": false,
-        "name": "Demon Slayer",
-        "pos": 131071,
-        "shortLink": "GRH0fWjQ",
-        "isTemplate": false,
-        "cardRole": null,
-        "badges": {
-            "attachmentsByType": {
-                "trello": {
-                    "board": 0,
-                    "card": 0
-                }
-            },
-            "location": false,
-            "votes": 0,
-            "viewingMemberVoted": false,
-            "subscribed": false,
-            "fogbugz": "",
-            "checkItems": 0,
-            "checkItemsChecked": 0,
-            "checkItemsEarliestDue": null,
-            "comments": 0,
-            "attachments": 0,
-            "description": false,
-            "due": null,
-            "dueComplete": false,
-            "start": null
-        },
-        "dueComplete": false,
-        "due": null,
-        "idChecklists": [],
-        "idMembers": [],
-        "labels": [],
-        "shortUrl": "https://trello.com/c/GRH0fWjQ",
-        "start": null,
-        "subscribed": false,
-        "url": "https://trello.com/c/GRH0fWjQ/7-demon-slayer",
-        "cover": {
-            "idAttachment": null,
-            "color": null,
-            "idUploadedBackground": null,
-            "size": "normal",
-            "brightness": "dark",
-            "idPlugin": null
-        }
+        "id": "614a08dac567c77d8890dbe9",
+        "name": "One Piece",
+        "dueComplete": false
+    },
+    {
+        "id": "614a099d9b05941df832e40d",
+        "name": "Fairy Tail",
+        "dueComplete": false
+    },
+    {
+        "id": "614a0b1b1c2453737dc48100",
+        "name": "Soma",
+        "dueComplete": true
     }
 ]
+```
 
+_Response (401 - Unauthorized)_  
 
-POST users/bookmarks
+```
+{
+  "message": "Invalid Token"
+}
+
+```
+
+_Response (500 - Internal server error)_  
+
+```
+{
+   message: "Internal server error"
+}
+
+```
+
+### POST /users/bookmarks 
+
+> Users can add their choosen anime to their bookmark list
+
+_Request Header_  
+
+```
+{
+    "Accept": "application/json",
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiZW1haWwiOiJ0ZXN0ZW1haWwyQGdtYWlsLmNvbSIsInJvbGUiOiJzdGFmZiIsImlhdCI6MTYzMDQzMDY0OH0.NCB6RcXEK6IlBzzSYIkWOzlCHJ7aQvoQCAVHvenb4eI"
+}
+```
+
+_Request Query Params_ 
+```
+{
+    title: "string"
+}
+```
+
+_Response (201 - Created)_  
+
+```
 {
     "id": "614a0b1b1c2453737dc48100",
     "name": "Soma",
     "dueComplete": false
 }
+```
 
-PUT users/bookmarks/:cardId
+_Response (401 - Unauthorized)_  
+
+```
+{
+  "message": "Invalid Token"
+}
+
+```
+
+_Response (500 - Internal server error)_  
+
+```
+{
+   message: "Internal server error"
+}
+
+```
+
+### PUT /users/bookmarks/:cardId
+
+> Users can update the status of bookmarked item
+
+_Request Header_  
+
+```
+{
+    "Accept": "application/json",
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiZW1haWwiOiJ0ZXN0ZW1haWwyQGdtYWlsLmNvbSIsInJvbGUiOiJzdGFmZiIsImlhdCI6MTYzMDQzMDY0OH0.NCB6RcXEK6IlBzzSYIkWOzlCHJ7aQvoQCAVHvenb4eI"
+}
+```
+
+_Request Params_ 
+```
+the card or bookmark id
+:cardId
+```
+
+_Request Query Params_ 
+```
+{
+    status: boolean
+}
+```
+
+_Response (200)_  
+
+```
 {
     "id": "614a0b1b1c2453737dc48100",
     "name": "Soma",
     "dueComplete": true
 }
+```
 
-DELETE users/bookmarks/:cardID
+_Response (401 - Unauthorized)_  
+
+```
 {
-    message: "Bookmark has been deleted"
+  "message": "Invalid Token"
 }
+
+```
+
+_Response (500 - Internal server error)_  
+
+```
+{
+   message: "Internal server error"
+}
+
+```
+
+### DELETE /users/bookmarks/:cardId
+
+> Users can delete a bookmark item
+
+_Request Header_  
+
+```
+{
+    "Accept": "application/json",
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiZW1haWwiOiJ0ZXN0ZW1haWwyQGdtYWlsLmNvbSIsInJvbGUiOiJzdGFmZiIsImlhdCI6MTYzMDQzMDY0OH0.NCB6RcXEK6IlBzzSYIkWOzlCHJ7aQvoQCAVHvenb4eI"
+}
+```
+
+_Request Params_ 
+```
+the card or bookmark id
+:cardId
+```
+
+
+_Response (200)_  
+
+```
+{
+    "message": "Bookmark has been deleted"
+}
+```
+
+_Response (401 - Unauthorized)_  
+
+```
+{
+  "message": "Invalid Token"
+}
+
+```
+
+_Response (500 - Internal server error)_  
+
+```
+{
+   message: "Internal server error"
+}
+
+```

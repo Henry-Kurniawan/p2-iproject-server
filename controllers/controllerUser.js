@@ -3,6 +3,7 @@ const { User } = require("../models")
 const {signToken} = require("../helpers/jwt")
 const {comparePassword} = require("../helpers/bcrypt")
 const axios = require("axios")
+const e = require("express")
 
 // In case you need to change the token to another set
 const TRELLO_BOARD_ID = process.env.TRELLO_BOARD_ID
@@ -118,7 +119,17 @@ class ControllerUser {
                 url: `https://api.trello.com/1/lists/${trelloListId}/cards`,
             })
 
-            res.status(200).json(trelloBookmarks.data)
+            let result = []
+            trelloBookmarks.data.forEach(el => {
+                let tempObj = {
+                    id: el.id,
+                    name: el.name,
+                    dueComplete: el.dueComplete
+                }
+                result.push(tempObj)
+            });
+
+            res.status(200).json(result)
         } catch (err) {
             next(err)
         }
