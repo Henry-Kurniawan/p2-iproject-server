@@ -13,3 +13,9 @@ app.use(cors())
 app.use(router)
 
 module.exports = app
+
+/*
+sequelize model:generate --name User --attributes email:string,password:string,trelloListId:string,phoneNumber:string,address:string
+sequelize model:generate --name Genre --attributes name:string
+
+*/
