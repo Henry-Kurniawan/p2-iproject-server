@@ -1,4 +1,5 @@
 const axios = require("axios")
+const {Genre} = require("../models")
 
 class ControllerAnime {
     static async getAnimeList(req, res, next) {
@@ -11,7 +12,7 @@ class ControllerAnime {
                 page = Number(page)
             }
             if(!per_page || per_page < 0) {
-                per_page = 9
+                per_page = 12
             } else {
                 per_page = Number(per_page)
             }
@@ -38,7 +39,7 @@ class ControllerAnime {
                 queryParams.formats = Number(formats)
             }
 
-            if(genres || genres.length > 0) {
+            if(genres) {
                 genres = genres.join(",")
                 queryParams.genres = genres
             }
@@ -60,6 +61,20 @@ class ControllerAnime {
         }
     }
     
+    static async getAnimeGenres(req, res, next) {
+        try {
+            let result = await Genre.findAll({
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                }
+            })
+
+            res.status(200).json(result)
+        } catch (err) {
+            next(err)
+        }
+    }
+
     static async getAnimeDetail(req, res, next) {
         try {
             const id = req.params.id

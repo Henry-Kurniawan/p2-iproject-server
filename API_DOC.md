@@ -68,7 +68,7 @@ arr = ["Tragedy", "War", "Action", "Comedy", "Drama"]
 
 
 _Response (200 - OK)_  
-> if without queries, default per_page items will be set to 9
+> if without queries, default per_page items will be set to 12
 ```
 {
     "status_code": 200,
@@ -256,6 +256,36 @@ _Response (500 - internal server error)_
 }
 ```
 
+### GET /animes/genres
+> Get all anime genres available for search
+
+
+_Response (200)_  
+```
+[
+    {
+        "id": 1,
+        "name": "Action"
+    },
+    {
+        "id": 2,
+        "name": "Adventure"
+    },
+    {
+        "id": 3,
+        "name": "Comedy"
+    },
+]
+```
+
+
+_Response (500 - internal server error)_  
+
+```
+{
+  "message": "Internal Server Error"
+}
+```
 
 ### GET /animes/:id
 > Get an anime by their ID
