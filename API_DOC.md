@@ -13,6 +13,7 @@ Heknime Planets App is an application to view a lot of animes list including all
 
 - POST /users/register
 - POST /users/login
+- POST /users/loginGoogle
 - GET /users/bookmarks
 - POST /users/bookmarks
 - PUT /users/:cardId
@@ -468,6 +469,37 @@ _Response (500 - internal server error)_
 }
 ```
 
+### POST /users/loginGoogle 
+> Login with google email, if not registered yet, it will automatically register user and login 
+
+
+_Request Body_  
+
+```
+{
+    "idToken"
+}
+```
+
+
+_Response (200)_  
+
+```
+{
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJSdWJlbl9CYXVjaEB5YWhvby5jb20iLCJpYXQiOjE2MzAzNDcxNzh9.XboW2QiDiknKKOgWPiNuexNYdB_4445bMjuKLmi0d0o",
+    "id": 11,
+    "email": "test5@gmail.com",
+    "trelloListId: "6149b1813f83c725d99351da" 
+}
+```
+
+_Response (500 - internal server error)_  
+
+```
+{
+  "message": "Internal Server Error"
+}
+```
 
 ### GET /users/bookmarks/
 > Users can see their own bookmarked Animes
