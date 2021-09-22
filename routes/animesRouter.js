@@ -4,6 +4,7 @@ const ControllerAnime = require("../controllers/controllerAnime")
 const errorHandler = require("../middleware/errorHandler")
 
 animesRouter.get("/", ControllerAnime.getAnimeList)
+animesRouter.get("/genres", ControllerAnime.getAnimeGenres)
 animesRouter.get("/:id", ControllerAnime.getAnimeDetail)
 
 animesRouter.use(errorHandler)
