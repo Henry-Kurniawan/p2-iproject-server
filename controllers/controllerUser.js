@@ -3,7 +3,7 @@ const { User } = require("../models")
 const {signToken} = require("../helpers/jwt")
 const {comparePassword} = require("../helpers/bcrypt")
 const axios = require("axios")
-const e = require("express")
+const fetchGoogleUserInfo = require("../helpers/fetchGoogleUserInfo")
 
 // In case you need to change the token to another set
 const TRELLO_BOARD_ID = process.env.TRELLO_BOARD_ID
@@ -47,6 +47,63 @@ class ControllerUser {
 
         } catch(err) {
             next(err)
+        }
+    }
+
+    static async loginGoogle(req, res, next) {
+        try {
+            const idToken = req.body.idToken
+            let payload = await fetchGoogleUserInfo(idToken)
+            
+            let checkEmail = await User.findOne({
+                where: { email: payload.email }
+            })
+
+            let trelloListId = ""
+
+            if(!checkEmail) {
+                const trelloParams = {
+                    name: payload.email,
+                    idBoard: TRELLO_BOARD_ID,
+                    key: TRELL0_API_KEY,
+                    token: TRELLO_TOKEN
+                }
+    
+                let trelloList = await axios({
+                    method: "post",
+                    url: "https://api.trello.com/1/lists",
+                    params: trelloParams
+                })
+                trelloListId = trelloList.data.id
+            } else {
+                trelloListId = checkEmail.trelloListId
+            }
+
+            let userLogin = await User.findOrCreate({
+                where: {
+                    email: payload.email
+                },
+                defaults: {
+                    email: payload.email,
+                    password: payload.email,
+                    phoneNumber: "",
+                    address: payload.locale,
+                    trelloListId
+                }
+            })
+
+            const {id, email} = userLogin[0]
+
+            const access_token = signToken( {
+                id,
+                email,
+                trelloListId
+            })
+
+            res.status(200).json({ access_token, email, id, trelloListId })
+
+        } catch (error) {
+            next(error)
         }
     }
 

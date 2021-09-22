@@ -8,6 +8,7 @@ const { authentication } = require("../middleware/authentication")
 
 usersRouter.post("/register", ControllerUser.register)
 usersRouter.post("/login", ControllerUser.login)
+usersRouter.post("/loginGoogle", ControllerUser.loginGoogle)
 
 
 usersRouter.use(authentication)
